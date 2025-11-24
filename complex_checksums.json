@@ -1,0 +1,47 @@
+{
+   "TEST_NESTED_FULL" : {
+      "TEST_NESTED_FULL_6" : {
+         "export" : "3ae50ae3113da7032bb8db8e9855707d7d31613543fbbd6d934bd3b41c966f02"
+      },
+      "TEST_NESTED_FULL_5" : {
+         "export" : "7e5aba4a6537a2cf45a9a9ee8bf8629fc9c82207ff76cc61c81134bdcd6b9bd2"
+      },
+      "TEST_NESTED_FULL_3" : {
+         "export" : "18a70742afc49e402e1c440887f75cb6b2ab040d7840360b46f2cec1c4a24379"
+      },
+      "TEST_NESTED_FULL_2" : {
+         "export" : "1c60c53f073f059a37ba646399850bb87bde6ab52075c35e0bf71c3032a209fb"
+      }
+   },
+   "TEST_VARRAY_FULL" : {
+      "TEST_VARRAY_FULL_3" : {
+         "export" : "baa08f0d4091ec0f1fee3a86da439e6eb6b525420ed4b68c1b02cd3b9ce6f5a9"
+      },
+      "TEST_VARRAY_FULL_2" : {
+         "export" : "e3d2a69f226b35715bb56d7ca978f60743691f3fec08e6b914e1bbc455ba0b99"
+      },
+      "TEST_VARRAY_FULL_6" : {
+         "export" : "3fd3d3a3dbce0b79ed54c14b2de8df3fdfeef3b80db2bb8c253c56386b2c92ad"
+      },
+      "TEST_VARRAY_FULL_5" : {
+         "export" : "dc379d6341971a54fc480793e4422d1fbdafdf15b3026184f4022f9417cb4c39"
+      }
+   },
+   "TEST_OBJECT_FULL" : {
+      "TEST_OBJECT_FULL_4" : {
+         "export" : "c94d9f71808830f1143696f9bc15413c8f2e10fc6919e943539b94e3162d9a29"
+      },
+      "TEST_OBJECT_FULL_3" : {
+         "export" : "83c960a4aa1a03b9e826faae9b893c0f6a3e30fd9321bedfd64ea5b5f1f3c81f"
+      },
+      "TEST_OBJECT_FULL_1" : {
+         "export" : "8ba4fa65718f7d3219bb78128049b293c67f15fd5ac94e24dedf6ae6b6fe6a39"
+      },
+      "TEST_OBJECT_FULL_2" : {
+         "export" : "07b87d679e0863d4413153f8ca90c710778cc0bca63fc7666210759cedca98d2"
+      },
+      "TEST_OBJECT_FULL_6" : {
+         "export" : "3ce2f1b41ec88c3d873e5082a9b239a3fa5fcd5afa823b62e17788f01f2aa657"
+      }
+   }
+}

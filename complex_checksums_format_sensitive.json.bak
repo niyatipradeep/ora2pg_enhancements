@@ -1,0 +1,36 @@
+{
+   "TEST_NESTED" : {
+      "TEST_NESTED_1" : {
+         "import" : "843714a84199abfd7609e88a06fe0e12a10565d06f9cdbdeae24289d3b923027",
+         "export" : "69de85fb2e6d11d17447ff68e13a242ec86ab8456dafd17e54257c2bffd98cb9"
+      },
+      "TEST_NESTED_2" : {
+         "export" : "c81feafa24b8efb15c0973cd9ed8caa82df0e271fcdc5d53d7d53abd238b7b9f",
+         "import" : "67b8de09a4499ce162953eb97082a4446cf8418c7feaef966ae1ffd4d7829bae"
+      }
+   },
+   "TEST_VARRAY" : {
+      "TEST_VARRAY_3" : {
+         "import" : "2c91afe64c1f334d8a812c4a6498954b10b58460289aa58e220b72cab516cdcd",
+         "export" : "02159ec6c46fed5c4c6e60583e4e2dcc23dcadda55578154fb1a3328fc9a875f"
+      },
+      "TEST_VARRAY_2" : {
+         "import" : "e436e1c5ef9b43ec828ee1b1fcaf7565f17233dab818262910e7573cb308dca7",
+         "export" : "e312765c31ad1304677715fbad33de42df52b3d54acefa881502e8087adfb849"
+      },
+      "TEST_VARRAY_1" : {
+         "import" : "aa8a1ceb465a7e4aced70f5d628a2d8f9e5f03da24c4be35d9077d045a8b8e48",
+         "export" : "a895b81bc8e1dfc18cc6837ec7c76ae10a8ac64174f2df56d0511e3681b547ca"
+      }
+   },
+   "TEST_OBJECT" : {
+      "TEST_OBJECT_1" : {
+         "import" : "bf24fa9b8d49e07b2a8ef592b86adc0f2b48651cdf8d150c8f86d62613c78335",
+         "export" : "506bac9c587da771f3361922abc858bc3bd12ac32379f89f292965b86d74cafa"
+      },
+      "TEST_OBJECT_2" : {
+         "export" : "b0c34647c3636e0b1a530e72475ae18e805e81099b980d7fe342b1eb825b99cf",
+         "import" : "007c143388d9264aeff76e7450443627313b333b2b204d7112bbfc0c7e584853"
+      }
+   }
+}

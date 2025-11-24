@@ -1,0 +1,125 @@
+Ora2Pg Complex Type Data Integrity Validation Report
+============================================================
+
+Generated: Mon Nov 24 18:39:49 2025
+
+COMPLEX TYPES FOUND
+------------------------------
+Table: TEST_NESTED_FULL
+  ARRAY_TYPE: 4 occurrences
+
+Table: TEST_OBJECT_FULL
+  OBJECT_TYPE: 5 occurrences
+
+Table: TEST_VARRAY_FULL
+  ARRAY_TYPE: 4 occurrences
+
+VALIDATION RESULTS
+------------------------------
+Table: TEST_NESTED_FULL
+  Rows checked: 4
+  Mismatches: 0
+  Errors: 0
+  Semantic normalization details:
+    Row TEST_NESTED_FULL_2 complex type processing:
+      Column 2 (ARRAY_TYPE):
+        Original:   '{AI}'
+        Normalized: '{AI}'
+        Serialized: 'ARRAY["AI"]'
+    Row TEST_NESTED_FULL_3 complex type processing:
+      Column 2 (ARRAY_TYPE):
+        Original:   '{Tech,Database,Cloud}'
+        Normalized: '{Tech,Database,Cloud}'
+        Serialized: 'ARRAY["Cloud","Database","Tech"]'
+    Row TEST_NESTED_FULL_5 complex type processing:
+      Column 2 (ARRAY_TYPE):
+        Original:   '{C++,Node.js,AI honors}'
+        Normalized: '{C++,Node.js,AI honors}'
+        Serialized: 'ARRAY["AI honors","C++","Node.js"]'
+    Row TEST_NESTED_FULL_6 complex type processing:
+      Column 2 (ARRAY_TYPE):
+        Original:   '{Cloud,Tech,Database}'
+        Normalized: '{Cloud,Tech,Database}'
+        Serialized: 'ARRAY["Cloud","Database","Tech"]'
+  Checksum details:
+    Row TEST_NESTED_FULL_2: export=1c60c53f073f059a37ba646399850bb87bde6ab52075c35e0bf71c3032a209fb, import=1c60c53f073f059a37ba646399850bb87bde6ab52075c35e0bf71c3032a209fb (✓ MATCH)
+    Row TEST_NESTED_FULL_3: export=18a70742afc49e402e1c440887f75cb6b2ab040d7840360b46f2cec1c4a24379, import=18a70742afc49e402e1c440887f75cb6b2ab040d7840360b46f2cec1c4a24379 (✓ MATCH)
+    Row TEST_NESTED_FULL_5: export=7e5aba4a6537a2cf45a9a9ee8bf8629fc9c82207ff76cc61c81134bdcd6b9bd2, import=7e5aba4a6537a2cf45a9a9ee8bf8629fc9c82207ff76cc61c81134bdcd6b9bd2 (✓ MATCH)
+    Row TEST_NESTED_FULL_6: export=3ae50ae3113da7032bb8db8e9855707d7d31613543fbbd6d934bd3b41c966f02, import=3ae50ae3113da7032bb8db8e9855707d7d31613543fbbd6d934bd3b41c966f02 (✓ MATCH)
+
+Table: TEST_OBJECT_FULL
+  Rows checked: 5
+  Mismatches: 0
+  Errors: 0
+  Semantic normalization details:
+    Row TEST_OBJECT_FULL_1 complex type processing:
+      Column 2 (OBJECT_TYPE):
+        Original:   '(,,,)'
+        Normalized: '(,,,)'
+        Serialized: 'RECORD("","","","")'
+    Row TEST_OBJECT_FULL_2 complex type processing:
+      Column 2 (OBJECT_TYPE):
+        Original:   '("123 Main St",,10001,)'
+        Normalized: '("123 Main St",,10001,)'
+        Serialized: 'RECORD("123 Main St","",10001,"")'
+    Row TEST_OBJECT_FULL_3 complex type processing:
+      Column 2 (OBJECT_TYPE):
+        Original:   '("456 Oak Ave","Los Angeles",90210,USA)'
+        Normalized: '("456 Oak Ave","Los Angeles",90210,USA)'
+        Serialized: 'RECORD("456 Oak Ave","Los Angeles",90210,"USA")'
+    Row TEST_OBJECT_FULL_4 complex type processing:
+      Column 2 (OBJECT_TYPE):
+        Original:   '("O'Reilly St",NYC,10001,"US ku")'
+        Normalized: '("O'Reilly St",NYC,10001,"US ku")'
+        Serialized: 'RECORD("O'Reilly St","NYC",10001,"US ku")'
+    Row TEST_OBJECT_FULL_6 complex type processing:
+      Column 2 (OBJECT_TYPE):
+        Original:   '("789 Pine Rd","San Francisco",94105,USA)'
+        Normalized: '("789 Pine Rd","San Francisco",94105,USA)'
+        Serialized: 'RECORD("789 Pine Rd","San Francisco",94105,"USA")'
+  Checksum details:
+    Row TEST_OBJECT_FULL_1: export=8ba4fa65718f7d3219bb78128049b293c67f15fd5ac94e24dedf6ae6b6fe6a39, import=8ba4fa65718f7d3219bb78128049b293c67f15fd5ac94e24dedf6ae6b6fe6a39 (✓ MATCH)
+    Row TEST_OBJECT_FULL_2: export=07b87d679e0863d4413153f8ca90c710778cc0bca63fc7666210759cedca98d2, import=07b87d679e0863d4413153f8ca90c710778cc0bca63fc7666210759cedca98d2 (✓ MATCH)
+    Row TEST_OBJECT_FULL_3: export=83c960a4aa1a03b9e826faae9b893c0f6a3e30fd9321bedfd64ea5b5f1f3c81f, import=83c960a4aa1a03b9e826faae9b893c0f6a3e30fd9321bedfd64ea5b5f1f3c81f (✓ MATCH)
+    Row TEST_OBJECT_FULL_4: export=c94d9f71808830f1143696f9bc15413c8f2e10fc6919e943539b94e3162d9a29, import=c94d9f71808830f1143696f9bc15413c8f2e10fc6919e943539b94e3162d9a29 (✓ MATCH)
+    Row TEST_OBJECT_FULL_6: export=3ce2f1b41ec88c3d873e5082a9b239a3fa5fcd5afa823b62e17788f01f2aa657, import=3ce2f1b41ec88c3d873e5082a9b239a3fa5fcd5afa823b62e17788f01f2aa657 (✓ MATCH)
+
+Table: TEST_VARRAY_FULL
+  Rows checked: 4
+  Mismatches: 0
+  Errors: 0
+  Semantic normalization details:
+    Row TEST_VARRAY_FULL_2 complex type processing:
+      Column 2 (ARRAY_TYPE):
+        Original:   '{42}'
+        Normalized: '{42}'
+        Serialized: 'ARRAY["42"]'
+    Row TEST_VARRAY_FULL_3 complex type processing:
+      Column 2 (ARRAY_TYPE):
+        Original:   '{10,20,30,40,50}'
+        Normalized: '{10,20,30,40,50}'
+        Serialized: 'ARRAY["10","20","30","40","50"]'
+    Row TEST_VARRAY_FULL_5 complex type processing:
+      Column 2 (ARRAY_TYPE):
+        Original:   '{1.1,2.25,3.75}'
+        Normalized: '{1.1,2.25,3.75}'
+        Serialized: 'ARRAY["1.1","2.25","3.75"]'
+    Row TEST_VARRAY_FULL_6 complex type processing:
+      Column 2 (ARRAY_TYPE):
+        Original:   '{-10,-20,-30}'
+        Normalized: '{-10,-20,-30}'
+        Serialized: 'ARRAY["-10","-20","-30"]'
+  Checksum details:
+    Row TEST_VARRAY_FULL_2: export=e3d2a69f226b35715bb56d7ca978f60743691f3fec08e6b914e1bbc455ba0b99, import=e3d2a69f226b35715bb56d7ca978f60743691f3fec08e6b914e1bbc455ba0b99 (✓ MATCH)
+    Row TEST_VARRAY_FULL_3: export=baa08f0d4091ec0f1fee3a86da439e6eb6b525420ed4b68c1b02cd3b9ce6f5a9, import=baa08f0d4091ec0f1fee3a86da439e6eb6b525420ed4b68c1b02cd3b9ce6f5a9 (✓ MATCH)
+    Row TEST_VARRAY_FULL_5: export=dc379d6341971a54fc480793e4422d1fbdafdf15b3026184f4022f9417cb4c39, import=dc379d6341971a54fc480793e4422d1fbdafdf15b3026184f4022f9417cb4c39 (✓ MATCH)
+    Row TEST_VARRAY_FULL_6: export=3fd3d3a3dbce0b79ed54c14b2de8df3fdfeef3b80db2bb8c253c56386b2c92ad, import=3fd3d3a3dbce0b79ed54c14b2de8df3fdfeef3b80db2bb8c253c56386b2c92ad (✓ MATCH)
+
+OVERALL VALIDATION SUMMARY
+------------------------------
+Total rows checked: 13
+Total mismatches: 0
+Total errors: 0
+Success rate: 100.00%
+
+✓ ALL VALIDATIONS PASSED - Data integrity verified!
