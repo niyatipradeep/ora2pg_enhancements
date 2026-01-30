@@ -40,6 +40,7 @@ use File::Temp qw/ tempfile /;
 use Benchmark;
 use Encode;
 use Ora2Pg::ChecksumValidator;
+use Ora2Pg::TypeMapper;
 
 #set locale to LC_NUMERIC C
 setlocale(LC_NUMERIC,"C");
@@ -409,6 +410,12 @@ sub export_schema
 			# Close output export file create above
 			$self->close_export_file($self->{fhout}) if (defined $self->{fhout});
 		}
+	}
+
+	# Log type support warnings for unsupported/partially supported types
+	# This is done at the end, after all export processing is complete
+	if ($self->{_type_mapper_info}) {
+		$self->_log_type_support_warnings($self->{_type_mapper_info});
 	}
 
 	# Disconnect from the database
@@ -1872,6 +1879,55 @@ sub _init
 
 		# Get the Oracle version
 		$self->{db_version} = $self->_get_version();
+
+		# Initialize automatic type mapping if enabled
+		if ($self->{auto_type_mapping} && !$self->{is_mysql} && !$self->{is_mssql})
+		{
+			$self->logit("INFO: Automatic type mapping enabled, analyzing custom types...\n", 1);
+			
+			eval {
+				my $type_mapper = Ora2Pg::TypeMapper->new(
+					dbh => $self->{dbh},
+					schema => $self->{schema},
+					prefix => $self->{user_grants} ? 'DBA' : 'ALL',
+					sysusers => $self->{sysusers},
+				);
+				
+			# Analyze and get automatic mappings
+			my $auto_mappings = $type_mapper->analyze_and_map_types();
+			
+			# Store type info for later warning logging (at end of export)
+			$self->{_type_mapper_info} = $type_mapper->{type_info};
+			
+			# Initialize storage for built-in unsupported type detection
+			$self->{_builtin_unsupported_types} = {};
+			
+			# Apply automatic mappings to modify_type configuration
+			# Note: modify_type uses lowercase table and column names
+			foreach my $table (keys %$auto_mappings) {
+				foreach my $column (keys %{$auto_mappings->{$table}}) {
+					my $pg_type = $auto_mappings->{$table}{$column};
+					my $lc_table = lc($table);
+					my $lc_column = lc($column);
+					# Do not overwrite an explicit MODIFY_TYPE set by the user
+					if (!exists $self->{modify_type}{$lc_table}{$lc_column}) {
+						$self->{modify_type}{$lc_table}{$lc_column} = $pg_type;
+						$self->logit("INFO: Auto-mapped $table.$column -> $pg_type\n", 1);
+					} else {
+						my $existing = $self->{modify_type}{$lc_table}{$lc_column};
+						$self->logit("INFO: Skipped auto-mapping for $table.$column -> $pg_type because MODIFY_TYPE is set to $existing\n", 1);
+					}
+				}
+			}				# Generate type mapping report if configured
+				if ($self->{type_mapping_report}) {
+					$type_mapper->generate_mapping_report($self->{type_mapping_report});
+					$self->logit("INFO: Type mapping report generated: $self->{type_mapping_report}\n", 1);
+				}
+			};
+			if ($@) {
+				$self->logit("WARNING: Automatic type mapping failed: $@\n", 1);
+			}
+		}
 
 		# Compile again all objects in the schema
 		if (!$self->{is_mysql} && !$self->{is_mssql} && $self->{compile_schema}) {
@@ -12596,6 +12652,13 @@ sub _howto_get_data
 				$current_type =~ s/\(\d+(?:,\d+)?\)//;
 				$current_type =~ s/\(\d+ (?:CHAR|BYTE)\)//;
 
+				# Check if this is a REF type - these cannot be exported
+				if ($current_type =~ /_REF$/ || $current_type =~ /^REF\s+/) {
+					$self->logit("SKIPPING column $table.$realcolname (type: $current_type) - REF types cannot be exported by DBD::Oracle\n", 1);
+					# Skip this column entirely - don't add it to the SELECT
+					next;
+				}
+
 				# Check if it is a standard type
 				if (!exists $Ora2Pg::Oracle::SQL_TYPE{$current_type} &&
 					$current_type !~ /^TIMESTAMP/ &&
@@ -14399,6 +14462,11 @@ sub set_custom_type_value
 	my $num_arr = -1;
 	my $isnested = 0;
 
+	# Debug logging to trace array vs composite type handling
+	if ($self->{debug}) {
+		$self->logit("DEBUG set_custom_type_value: data_type=$data_type, dest_type=$dest_type\n", 1);
+	}
+
 	for (my $i = 0; $i <= $#{$col_ref}; $i++)
 	{
 		if ($col_ref->[$i] !~ /^ARRAY\(0x/)
@@ -14527,12 +14595,73 @@ sub set_custom_type_value
 	}
 	elsif ($isnested)
 	{
-		# ARRAY[ROW('B','C')]
+		# ARRAY[ROW('B','C')] - composites with multiple fields
 		my $is_string = 0;
 		foreach my $g (@{$self->{user_type}{$dest_type}->{pg_types}}) {
 			$is_string = 1 if (grep(/(text|char|varying)/i, @$g));
 		}
-		if ($is_string) {
+		
+		# Check if AUTO_FIX_COMPOSITE or CLEAN_COMPOSITE_FORMAT is enabled
+		if (($self->{auto_fix_composite} || $self->{clean_composite_format}) && $self->{type} eq 'COPY')
+		{
+			# Determine if this is an array type (ends with []) or composite type
+			my $is_array_type = ($dest_type =~ /\[\d*\]$/);
+			
+			if ($is_array_type)
+			{
+				# PostgreSQL array format: {value1,value2,value3}
+				# @type_col contains individual element values
+				my @clean_cols;
+				foreach my $col (@type_col) {
+					# For text arrays, quote each element
+					if ($dest_type =~ /(text|char|varying)\[\d*\]$/i) {
+						next if (!defined($col) || $col eq '');
+						$col =~ s/^\s+//;
+						$col =~ s/\s+$//;
+						$col =~ s/^"//;
+						$col =~ s/"$//;
+						$col =~ s/\\/\\\\/g;
+						$col =~ s/"/\\"/g;
+						$col = '"' . $col . '"';
+					}
+					# Numeric arrays - just trim
+					else {
+						$col =~ s/^\s+// if defined($col);
+						$col =~ s/\s+$// if defined($col);
+					}
+					push(@clean_cols, $col) if defined($col);
+				}
+				$result = '{' . join(',', @clean_cols) . '}';
+			}
+			else
+			{
+				# Composite type format: ("value1","value2",numeric_value)
+				# @type_col contains individual field values already collected
+				my @clean_fields;
+				foreach my $field (@type_col) {
+					# Handle NULL/undefined values
+					if (!defined($field) || $field eq '') {
+						push(@clean_fields, '');  # Keep empty for NULL
+					}
+					# Numeric values - no quotes
+					elsif ($field =~ /^-?\d+(?:\.\d+)?$/) {
+						push(@clean_fields, $field);
+					}
+					# String values - quote and escape
+					else {
+						# Remove any existing wrapping
+						$field =~ s/^"//;
+						$field =~ s/"$//;
+						# Escape internal quotes
+						$field =~ s/"/\\"/g;
+						# Add quotes
+						push(@clean_fields, '"' . $field . '"');
+					}
+				}
+				$result = '(' . join(',', @clean_fields) . ')';
+			}
+		}
+		elsif ($is_string) {
 			$result =  '({"(' . join(',', @type_col) . ')"})';
 		} else {
 			$result =  '("{' . join(',', @type_col) . '}")';
@@ -15185,6 +15314,18 @@ sub parse_config
 			my ($table, $col, $type) = split(/:/, lc($r));
 			$AConfig{$var}{$table}{$col} = $type;
 		}
+	}
+	elsif ($var eq 'AUTO_TYPE_MAPPING')
+	{
+		$AConfig{$var} = $val;
+	}
+	elsif ($var eq 'AUTO_FIX_COMPOSITE')
+	{
+		$AConfig{$var} = $val;
+	}
+	elsif ($var eq 'TYPE_MAPPING_REPORT')
+	{
+		$AConfig{$var} = $val;
 	}
 	elsif ($var eq 'REPLACE_COLS')
 	{
@@ -16567,6 +16708,158 @@ sub log_complex_type_warning
 	
 	# Log to console/main log (and now export log)
 	$self->logit($msg, 0);
+}
+
+sub _log_type_support_warnings
+{
+	my ($self, $type_info) = @_;
+	
+	my $unsupported_count = 0;
+	my $partial_count = 0;
+	my $fully_supported_count = 0;
+	
+	# Count custom types from TypeMapper
+	if ($type_info && ref($type_info) eq 'HASH') {
+		foreach my $type_name (sort keys %$type_info) {
+			my $info = $type_info->{$type_name};
+			my $support_level = $info->{support_level} || 'unknown';
+			
+			if ($support_level eq 'UNSUPPORTED') {
+				$unsupported_count++;
+			} elsif ($support_level eq 'PARTIALLY_SUPPORTED') {
+				$partial_count++;
+			} elsif ($support_level eq 'FULLY_SUPPORTED') {
+				$fully_supported_count++;
+			}
+		}
+	}
+	
+	# Count built-in types from Oracle.pm detection
+	my $builtin_count = 0;
+	my $builtin_partial = 0;
+	my $builtin_unsupported = 0;
+	if ($self->{_builtin_unsupported_types} && ref($self->{_builtin_unsupported_types}) eq 'HASH') {
+		foreach my $key (keys %{$self->{_builtin_unsupported_types}}) {
+			my $info = $self->{_builtin_unsupported_types}{$key};
+			$builtin_count++;
+			if ($info->{support_level} eq 'UNSUPPORTED') {
+				$builtin_unsupported++;
+				$unsupported_count++;
+			} elsif ($info->{support_level} eq 'PARTIALLY_SUPPORTED') {
+				$builtin_partial++;
+				$partial_count++;
+			}
+		}
+	}
+	
+	# Only log if there are unsupported or partially supported types
+	if ($unsupported_count > 0 || $partial_count > 0) {
+		$self->logit("\n" . "=" x 80 . "\n", 0);
+		$self->logit("COMPLEX TYPE SUPPORT ANALYSIS\n", 0);
+		$self->logit("=" x 80 . "\n\n", 0);
+		
+		# Log unsupported custom types first
+		if ($type_info && ref($type_info) eq 'HASH') {
+			foreach my $type_name (sort keys %$type_info) {
+				my $info = $type_info->{$type_name};
+				my $support_level = $info->{support_level} || 'unknown';
+				my $confidence = $info->{confidence} || 0;
+				my $warning_msg = $info->{warning_message} || '';
+				my $recommendation = $info->{recommendation} || '';
+				
+				if ($support_level eq 'UNSUPPORTED') {
+					$self->logit("[ERROR] UNSUPPORTED custom type: '$type_name'\n", 0);
+					$self->logit("        Confidence: $confidence% | Oracle Type: $info->{oracle_type}\n", 0);
+					if ($warning_msg) {
+						$self->logit("        Issue: $warning_msg\n", 0);
+					}
+					if ($recommendation) {
+						$self->logit("        Action Required: $recommendation\n", 0);
+					}
+					$self->logit("\n", 0);
+				}
+			}
+		}
+		
+		# Log unsupported built-in types
+		if ($self->{_builtin_unsupported_types} && ref($self->{_builtin_unsupported_types}) eq 'HASH') {
+			foreach my $key (sort keys %{$self->{_builtin_unsupported_types}}) {
+				my $info = $self->{_builtin_unsupported_types}{$key};
+				next unless $info->{support_level} eq 'UNSUPPORTED';
+				
+				$self->logit("[ERROR] UNSUPPORTED built-in type in Table '$info->{table}', Column '$info->{column}'\n", 0);
+				$self->logit("        Confidence: $info->{confidence}% | Oracle Type: $info->{oracle_type} | PostgreSQL: $info->{pg_mapping}\n", 0);
+				if ($info->{warning_message}) {
+					$self->logit("        Issue: $info->{warning_message}\n", 0);
+				}
+				if ($info->{recommendation}) {
+					$self->logit("        Action Required: $info->{recommendation}\n", 0);
+				}
+				$self->logit("\n", 0);
+			}
+		}
+		
+		# Log partially supported custom types
+		if ($type_info && ref($type_info) eq 'HASH') {
+			foreach my $type_name (sort keys %$type_info) {
+				my $info = $type_info->{$type_name};
+				my $support_level = $info->{support_level} || 'unknown';
+				my $confidence = $info->{confidence} || 0;
+				my $warning_msg = $info->{warning_message} || '';
+				my $recommendation = $info->{recommendation} || '';
+				
+				if ($support_level eq 'PARTIALLY_SUPPORTED') {
+					$self->logit("[WARNING] PARTIALLY SUPPORTED custom type: '$type_name'\n", 0);
+					$self->logit("          Confidence: $confidence% | Oracle Type: $info->{oracle_type} | PostgreSQL: $info->{pg_mapping}\n", 0);
+					if ($warning_msg) {
+						$self->logit("          Issue: $warning_msg\n", 0);
+					}
+					if ($recommendation) {
+						$self->logit("          Recommendation: $recommendation\n", 0);
+					}
+					$self->logit("\n", 0);
+				}
+			}
+		}
+		
+		# Log partially supported built-in types
+		if ($self->{_builtin_unsupported_types} && ref($self->{_builtin_unsupported_types}) eq 'HASH') {
+			foreach my $key (sort keys %{$self->{_builtin_unsupported_types}}) {
+				my $info = $self->{_builtin_unsupported_types}{$key};
+				next unless $info->{support_level} eq 'PARTIALLY_SUPPORTED';
+				
+				$self->logit("[WARNING] PARTIALLY SUPPORTED built-in type in Table '$info->{table}', Column '$info->{column}'\n", 0);
+				$self->logit("          Confidence: $info->{confidence}% | Oracle Type: $info->{oracle_type} | PostgreSQL: $info->{pg_mapping}\n", 0);
+				if ($info->{warning_message}) {
+					$self->logit("          Issue: $info->{warning_message}\n", 0);
+				}
+				if ($info->{recommendation}) {
+					$self->logit("          Recommendation: $info->{recommendation}\n", 0);
+				}
+				$self->logit("\n", 0);
+			}
+		}
+		
+		# Log summary
+		$self->logit("=" x 80 . "\n", 0);
+		$self->logit("SUMMARY: Complex Type Support Analysis\n", 0);
+		$self->logit("  Fully Supported Types: $fully_supported_count\n", 0);
+		if ($partial_count > 0) {
+			$self->logit("  Partially Supported Types: $partial_count", 0);
+			if ($builtin_partial > 0) {
+				$self->logit(" ($builtin_partial built-in, " . ($partial_count - $builtin_partial) . " custom)", 0);
+			}
+			$self->logit(" (review recommended)\n", 0);
+		}
+		if ($unsupported_count > 0) {
+			$self->logit("  Unsupported Types: $unsupported_count", 0);
+			if ($builtin_unsupported > 0) {
+				$self->logit(" ($builtin_unsupported built-in, " . ($unsupported_count - $builtin_unsupported) . " custom)", 0);
+			}
+			$self->logit(" (manual migration required)\n", 0);
+		}
+		$self->logit("=" x 80 . "\n\n", 0);
+	}
 }
 
 =head2 logrep

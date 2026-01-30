@@ -785,6 +785,10 @@ ORDER BY A.COLUMN_ID
 			next if (!$self->is_in_struct($row->[8], $row->[0]));
 			push(@{$data{"$row->[8]"}{"$row->[0]"}}, (@$row, $virtual, $pos, @geom_inf));
 		}
+		
+		# Detect built-in unsupported/partially supported types for warning system
+		Ora2Pg::Oracle::_detect_builtin_complex_type($self, $row->[8], $row->[0], $row->[1]);
+		
 		$pos++;
 		$ncols++;
 	}
@@ -4172,6 +4176,77 @@ sub _has_dbms_log_execute_privilege
 	$self->logit("DEBUG: Source database user " . (!$has_dbms_log_execute_privilege ? "doesn't ": "") . "have 'EXECUTE' privilege on 'DBMS_LOG'\n", 1);
 
 	return $has_dbms_log_execute_privilege;
+}
+
+=head2 _detect_builtin_complex_type TABLE COLUMN DATA_TYPE
+
+Detect Oracle built-in complex types (SDO_GEOMETRY, XMLTYPE, etc.) 
+and store them for warning reporting at end of export.
+
+=cut
+
+sub _detect_builtin_complex_type
+{
+	my ($self, $table, $column, $data_type) = @_;
+	
+	return unless $self->{_builtin_unsupported_types};
+	
+	my $type_info = undef;
+	
+	# Detect SDO_GEOMETRY (Oracle Spatial)
+	if ($data_type eq 'SDO_GEOMETRY') {
+		$type_info = {
+			oracle_type => 'SDO_GEOMETRY',
+			pg_mapping => 'geometry (PostGIS)',
+			confidence => 50,
+			support_level => 'PARTIALLY_SUPPORTED',
+			warning_message => "SDO_GEOMETRY is Oracle's spatial data type. Requires PostGIS extension in PostgreSQL.",
+			recommendation => "Ensure PostGIS is installed. Verify SRID mappings and geometry types. Test spatial queries and indexes after migration."
+		};
+	}
+	# Detect XMLTYPE
+	elsif ($data_type eq 'XMLTYPE') {
+		$type_info = {
+			oracle_type => 'XMLTYPE',
+			pg_mapping => 'xml',
+			confidence => 60,
+			support_level => 'PARTIALLY_SUPPORTED',
+			warning_message => "XMLTYPE is Oracle's native XML data type. PostgreSQL has xml type, but XML functions differ significantly.",
+			recommendation => "Review and rewrite Oracle XML functions (XMLQuery, XMLTable, etc.) using PostgreSQL xml functions (xpath, xmltable, etc.)."
+		};
+	}
+	# Detect REF types (Oracle object references - not supported for data export)
+	elsif ($data_type =~ /^REF\s+/i || $data_type =~ /_REF$/) {
+		$type_info = {
+			oracle_type => $data_type,
+			pg_mapping => 'N/A (cannot be migrated)',
+			confidence => 0,
+			support_level => 'UNSUPPORTED',
+			warning_message => "$data_type is an Oracle REF type (object reference). DBD::Oracle cannot export REF data (ORA-24359 error). REF types have no PostgreSQL equivalent.",
+			recommendation => "Restructure data model to use foreign keys instead of REF types. Export will skip tables with REF columns to avoid errors."
+		};
+	}
+	# Detect other potentially problematic built-in types
+	elsif ($data_type =~ /^(BFILE|ANYDATA|ANYTYPE|UROWID|ROWID)$/) {
+		$type_info = {
+			oracle_type => $data_type,
+			pg_mapping => 'text (lossy conversion)',
+			confidence => 20,
+			support_level => 'UNSUPPORTED',
+			warning_message => "$data_type is an Oracle-specific type with no direct PostgreSQL equivalent.",
+			recommendation => "Manual data restructuring required. Consider alternative approaches or store as text with application-level handling."
+		};
+	}
+	
+	# Store the type info if detected
+	if ($type_info) {
+		my $key = "$table.$column";
+		$self->{_builtin_unsupported_types}{$key} = {
+			%$type_info,
+			table => $table,
+			column => $column
+		};
+	}
 }
 
 1;

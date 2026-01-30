@@ -1,0 +1,48 @@
+================================================================================
+Oracle Custom Type Automatic Mapping Report
+Generated: Fri Jan 30 22:33:26 2026
+Schema: LOLU
+================================================================================
+
+CUSTOM TYPE MAPPINGS:
+--------------------------------------------------------------------------------
+Oracle Type               Oracle Definition              PostgreSQL Type     
+--------------------------------------------------------------------------------
+PHONE_TYPE                OBJECT (complex)               phone_type (composit
+LIMITED_LIST              COLLECTION OF VARCHAR2         text[]              
+NUMBER_ARRAY              COLLECTION OF NUMBER           numeric[]           
+ADDRESS_TYPE              OBJECT with 4 attributes       address_type (compos
+STRING_LIST               COLLECTION OF VARCHAR2         text[]              
+ADDRESS_OBJ               OBJECT with 4 attributes       address_obj (composi
+PERSON_NESTED             OBJECT (complex)               person_nested (compo
+EMPLOYEE_LIST             COLLECTION OF EMPLOYEE_TYPE (o employee_type[]     
+DOCUMENT_TYPE             OBJECT with 4 attributes       document_type (compo
+PERSON_REF                OBJECT with 2 attributes       person_ref (composit
+EMPLOYEE_TYPE             OBJECT with 3 attributes       employee_type (compo
+TAG_LIST                  COLLECTION OF VARCHAR2         text[]              
+CONTACT_INFO              OBJECT with 2 attributes       contact_info (compos
+NUMBER_VARRAY             COLLECTION OF NUMBER           numeric[]           
+
+
+COLUMN MAPPINGS APPLIED:
+--------------------------------------------------------------------------------
+Table                          Column                    PostgreSQL Type     
+--------------------------------------------------------------------------------
+BIN$Qc2whEj0AS3gYwIAEazTNw==$0 TAGS                      text[]              
+BIN$Qc2whEj3AS3gYwIAEazTNw==$0 NUMBERS                   numeric[]           
+BIN$Qc2whEj6AS3gYwIAEazTNw==$0 ADDRESS                   address_obj         
+TEST_ARRAY_OF_OBJECTS          EMPLOYEES                 employee_type[]     
+TEST_NESTED                    TAGS                      text[]              
+TEST_NESTED_FULL               TAGS                      text[]              
+TEST_OBJECT                    ADDRESS                   address_type        
+TEST_OBJECTS_WITH_LOBS         DOCUMENT                  document_type       
+TEST_OBJECT_FULL               ADDRESS                   address_type        
+TEST_REF_TYPES                 MANAGER                   person_ref          
+TEST_VARRAY                    NUMBERS                   numeric[]           
+TEST_VARRAY_CONSTRAINTS        LIMITED_ITEMS             text[]              
+TEST_VARRAY_FULL               NUMBERS                   numeric[]           
+
+================================================================================
+Total custom types mapped: 14
+Total columns affected: 13
+================================================================================

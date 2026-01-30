@@ -205,7 +205,8 @@ TO_INST_PM = fix_insert_syntax.pl \
 	lib/Ora2Pg/MSSQL.pm \
 	lib/Ora2Pg/MySQL.pm \
 	lib/Ora2Pg/Oracle.pm \
-	lib/Ora2Pg/PLSQL.pm
+	lib/Ora2Pg/PLSQL.pm \
+	lib/Ora2Pg/TypeMapper.pm
 
 
 # --- MakeMaker platform_constants section:
@@ -894,7 +895,8 @@ pm_to_blib : $(FIRST_MAKEFILE) $(TO_INST_PM)
 	  'lib/Ora2Pg/MSSQL.pm' 'blib/lib/Ora2Pg/MSSQL.pm' \
 	  'lib/Ora2Pg/MySQL.pm' 'blib/lib/Ora2Pg/MySQL.pm' \
 	  'lib/Ora2Pg/Oracle.pm' 'blib/lib/Ora2Pg/Oracle.pm' \
-	  'lib/Ora2Pg/PLSQL.pm' 'blib/lib/Ora2Pg/PLSQL.pm' 
+	  'lib/Ora2Pg/PLSQL.pm' 'blib/lib/Ora2Pg/PLSQL.pm' \
+	  'lib/Ora2Pg/TypeMapper.pm' 'blib/lib/Ora2Pg/TypeMapper.pm' 
 	$(NOECHO) $(TOUCH) pm_to_blib
 
 

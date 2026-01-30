@@ -1,95 +1,154 @@
-[2025-11-24 20:01:07] Ora2Pg version: 25.0
-[2025-11-24 20:01:07] Export type: COPY
-[2025-11-24 20:01:07] Geometry export type: INTERNAL
-[2025-11-24 20:01:07] ORACLE_HOME = /usr/local/oracle/10g
-[2025-11-24 20:01:07] NLS_LANG = AMERICAN_AMERICA.AL32UTF8
-[2025-11-24 20:01:07] NLS_NCHAR = AL32UTF8
-[2025-11-24 20:01:07] Trying to connect to database: dbi:Oracle:host=localhost;service_name=XEPDB1;port=1521
-[2025-11-24 20:01:07] Isolation level: SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
-[2025-11-24 20:01:07] Force Oracle to compile schema LOLU before code extraction
-[2025-11-24 20:01:07] Retrieving table information...
-[2025-11-24 20:01:07] Collecting 3 tables in ALL_OBJECTS took:  0 wallclock secs ( 0.00 usr +  0.00 sys =  0.00 CPU)
-[2025-11-24 20:01:07] Collecting 3 tables information in ALL_TABLES took:  0 wallclock secs ( 0.00 usr +  0.00 sys =  0.00 CPU)
-[2025-11-24 20:01:07] Retrieving index information...
-[2025-11-24 20:01:07] Collecting 4 indexes in ALL_INDEXES took:  0 wallclock secs ( 0.00 usr +  0.00 sys =  0.00 CPU)
-[2025-11-24 20:01:07] Retrieving columns information...
-[2025-11-24 20:01:07] Collecting column information for table ...
-[2025-11-24 20:01:07] DEBUG, 
+[2026-01-30 22:33:26] Ora2Pg version: 25.0
+[2026-01-30 22:33:26] Export type: COPY
+[2026-01-30 22:33:26] Geometry export type: INTERNAL
+[2026-01-30 22:33:26] ORACLE_HOME = /usr/local/oracle/10g
+[2026-01-30 22:33:26] NLS_LANG = AMERICAN_AMERICA.AL32UTF8
+[2026-01-30 22:33:26] NLS_NCHAR = AL32UTF8
+[2026-01-30 22:33:26] Trying to connect to database: dbi:Oracle:host=localhost;service_name=XEPDB1;port=1521
+[2026-01-30 22:33:26] Isolation level: SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
+[2026-01-30 22:33:26] INFO: Automatic type mapping enabled, analyzing custom types...
+[2026-01-30 22:33:26] INFO: Skipped auto-mapping for TEST_OBJECT.ADDRESS -> address_type because MODIFY_TYPE is set to text
+[2026-01-30 22:33:26] INFO: Auto-mapped TEST_OBJECTS_WITH_LOBS.DOCUMENT -> document_type
+[2026-01-30 22:33:26] INFO: Auto-mapped BIN$Qc2whEj3AS3gYwIAEazTNw==$0.NUMBERS -> numeric[]
+[2026-01-30 22:33:26] INFO: Skipped auto-mapping for TEST_VARRAY_FULL.NUMBERS -> numeric[] because MODIFY_TYPE is set to decimal(10,2)[]
+[2026-01-30 22:33:26] INFO: Skipped auto-mapping for TEST_NESTED_FULL.TAGS -> text[] because MODIFY_TYPE is set to varchar(500)[]
+[2026-01-30 22:33:26] INFO: Skipped auto-mapping for TEST_NESTED.TAGS -> text[] because MODIFY_TYPE is set to varchar(200)[]
+[2026-01-30 22:33:26] INFO: Auto-mapped TEST_REF_TYPES.MANAGER -> person_ref
+[2026-01-30 22:33:26] INFO: Skipped auto-mapping for TEST_VARRAY.NUMBERS -> numeric[] because MODIFY_TYPE is set to integer[]
+[2026-01-30 22:33:26] INFO: Auto-mapped TEST_ARRAY_OF_OBJECTS.EMPLOYEES -> employee_type[]
+[2026-01-30 22:33:26] INFO: Auto-mapped BIN$Qc2whEj0AS3gYwIAEazTNw==$0.TAGS -> text[]
+[2026-01-30 22:33:26] INFO: Auto-mapped BIN$Qc2whEj6AS3gYwIAEazTNw==$0.ADDRESS -> address_obj
+[2026-01-30 22:33:26] INFO: Auto-mapped TEST_VARRAY_CONSTRAINTS.LIMITED_ITEMS -> text[]
+[2026-01-30 22:33:26] INFO: Skipped auto-mapping for TEST_OBJECT_FULL.ADDRESS -> address_type because MODIFY_TYPE is set to jsonb
+[2026-01-30 22:33:26] INFO: Type mapping report generated: output/type_mapping_report.txt
+[2026-01-30 22:33:26] Force Oracle to compile schema LOLU before code extraction
+[2026-01-30 22:33:27] Retrieving table information...
+[2026-01-30 22:33:27] Collecting 3 tables in ALL_OBJECTS took:  0 wallclock secs ( 0.00 usr +  0.00 sys =  0.00 CPU)
+[2026-01-30 22:33:27] Collecting 3 tables information in ALL_TABLES took:  0 wallclock secs ( 0.00 usr +  0.00 sys =  0.00 CPU)
+[2026-01-30 22:33:27] Retrieving index information...
+[2026-01-30 22:33:27] Collecting 4 indexes in ALL_INDEXES took:  0 wallclock secs ( 0.00 usr +  0.00 sys =  0.00 CPU)
+[2026-01-30 22:33:27] Retrieving columns information...
+[2026-01-30 22:33:27] Collecting column information for table ...
+[2026-01-30 22:33:27] DEBUG, 
 SELECT A.COLUMN_NAME, A.DATA_TYPE, A.DATA_LENGTH, A.NULLABLE, A.DATA_DEFAULT,
     A.DATA_PRECISION, A.DATA_SCALE, A.CHAR_LENGTH, A.TABLE_NAME, A.OWNER
 FROM ALL_TAB_COLUMNS A
 WHERE A.TABLE_NAME NOT LIKE 'BIN$%' AND A.OWNER='LOLU'  AND (REGEXP_LIKE(UPPER(A.TABLE_NAME), ?) OR REGEXP_LIKE(UPPER(A.TABLE_NAME), ?) OR REGEXP_LIKE(UPPER(A.TABLE_NAME), ?) OR REGEXP_LIKE(UPPER(A.TABLE_NAME), ?) OR REGEXP_LIKE(UPPER(A.TABLE_NAME), ?) OR REGEXP_LIKE(UPPER(A.TABLE_NAME), ?))
 ORDER BY A.COLUMN_ID
-[2025-11-24 20:01:07] Collecting 12 columns in ALL_INDEXES took:  0 wallclock secs ( 0.00 usr +  0.00 sys =  0.00 CPU)
-[2025-11-24 20:01:07] Retrieving foreign keys information...
-[2025-11-24 20:01:07] Retrieving unique keys information...
-[2025-11-24 20:01:07] Retrieving check constraints information...
-[2025-11-24 20:01:08] [1] Scanning table TEST_NESTED_FULL (4 rows)...
-[2025-11-24 20:01:08] [2] Scanning table TEST_OBJECT_FULL (5 rows)...
-[2025-11-24 20:01:08] [3] Scanning table TEST_VARRAY_FULL (4 rows)...
-[2025-11-24 20:01:08] ORACLE_HOME = /usr/local/oracle/10g
-[2025-11-24 20:01:08] NLS_LANG = AMERICAN_AMERICA.AL32UTF8
-[2025-11-24 20:01:08] NLS_NCHAR = AL32UTF8
-[2025-11-24 20:01:08] Trying to connect to database: dbi:Oracle:host=localhost;service_name=XEPDB1;port=1521
-[2025-11-24 20:01:08] Isolation level: SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
-[2025-11-24 20:01:08] Automatic storing of current SCN for table export: 9094554
-[2025-11-24 20:01:08] Retrieving partitions information...
-[2025-11-24 20:01:08] Collecting 4 indexes in ALL_INDEXES took:  0 wallclock secs ( 0.00 usr +  0.00 sys =  0.00 CPU)
-[2025-11-24 20:01:08] (pid: 67602) Exporting data from table TEST_NESTED_FULL...
-[2025-11-24 20:01:08] Looking how to retrieve data from TEST_NESTED_FULL...
-[2025-11-24 20:01:08] [WARNING] [COMPLEX_TYPE] Table: TEST_NESTED_FULL, Column: TAGS, Type: STRING_LIST - Manual review required
-[2025-11-24 20:01:08] DEGUG: Query sent to Oracle: SELECT a."ID",a."POST_TITLE",a."TAGS",a."CREATED_DATE" FROM "LOLU"."TEST_NESTED_FULL" AS OF SCN 9094554 a
-[2025-11-24 20:01:08] Data type STRING_LIST is not native, searching on custom types.
-[2025-11-24 20:01:08] ORACLE_HOME = /usr/local/oracle/10g
-[2025-11-24 20:01:08] NLS_LANG = AMERICAN_AMERICA.AL32UTF8
-[2025-11-24 20:01:08] NLS_NCHAR = AL32UTF8
-[2025-11-24 20:01:08] Trying to connect to database: dbi:Oracle:host=localhost;service_name=XEPDB1;port=1521
-[2025-11-24 20:01:08] Isolation level: SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
-[2025-11-24 20:01:08] 	Found Type: STRING_LIST
-[2025-11-24 20:01:08] 	Looking inside custom type STRING_LIST to extract values...
-[2025-11-24 20:01:08] 	found type description: STRING_LIST(varchar)
-[2025-11-24 20:01:08] Fetching all data from TEST_NESTED_FULL tuples...
-[2025-11-24 20:01:08] DEBUG: Formatting bulk of 10000 data (real: 4 rows) for PostgreSQL.
-[2025-11-24 20:01:08] DEBUG: Creating output for 10000 tuples
-[2025-11-24 20:01:08] Dumping data from TEST_NESTED_FULL to file: test_output.sql
-[2025-11-24 20:01:08] Extracted records from table TEST_NESTED_FULL: total_records = 4 (avg: 4 recs/sec)
-[2025-11-24 20:01:08] (pid: 67602) Exporting data from table TEST_OBJECT_FULL...
-[2025-11-24 20:01:08] Looking how to retrieve data from TEST_OBJECT_FULL...
-[2025-11-24 20:01:08] [WARNING] [COMPLEX_TYPE] Table: TEST_OBJECT_FULL, Column: ADDRESS, Type: ADDRESS_TYPE - Manual review required
-[2025-11-24 20:01:08] DEGUG: Query sent to Oracle: SELECT a."ID",a."CUSTOMER_NAME",a."ADDRESS",a."CREATED_DATE" FROM "LOLU"."TEST_OBJECT_FULL" AS OF SCN 9094554 a
-[2025-11-24 20:01:08] Data type ADDRESS_TYPE is not native, searching on custom types.
-[2025-11-24 20:01:08] ORACLE_HOME = /usr/local/oracle/10g
-[2025-11-24 20:01:08] NLS_LANG = AMERICAN_AMERICA.AL32UTF8
-[2025-11-24 20:01:08] NLS_NCHAR = AL32UTF8
-[2025-11-24 20:01:08] Trying to connect to database: dbi:Oracle:host=localhost;service_name=XEPDB1;port=1521
-[2025-11-24 20:01:08] Isolation level: SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
-[2025-11-24 20:01:08] 	Found Type: ADDRESS_TYPE
-[2025-11-24 20:01:08] 	Looking inside custom type ADDRESS_TYPE to extract values...
-[2025-11-24 20:01:08] 	found type description: ADDRESS_TYPE(varchar,varchar,numeric,varchar)
-[2025-11-24 20:01:08] Fetching all data from TEST_OBJECT_FULL tuples...
-[2025-11-24 20:01:08] DEBUG: Formatting bulk of 10000 data (real: 5 rows) for PostgreSQL.
-[2025-11-24 20:01:08] DEBUG: Creating output for 10000 tuples
-[2025-11-24 20:01:08] Dumping data from TEST_OBJECT_FULL to file: test_output.sql
-[2025-11-24 20:01:08] Extracted records from table TEST_OBJECT_FULL: total_records = 5 (avg: 5 recs/sec)
-[2025-11-24 20:01:08] (pid: 67602) Exporting data from table TEST_VARRAY_FULL...
-[2025-11-24 20:01:08] Looking how to retrieve data from TEST_VARRAY_FULL...
-[2025-11-24 20:01:08] [WARNING] [COMPLEX_TYPE] Table: TEST_VARRAY_FULL, Column: NUMBERS, Type: NUMBER_ARRAY - Manual review required
-[2025-11-24 20:01:08] DEGUG: Query sent to Oracle: SELECT a."ID",a."NAME",a."NUMBERS",a."CREATED_DATE" FROM "LOLU"."TEST_VARRAY_FULL" AS OF SCN 9094554 a
-[2025-11-24 20:01:08] Data type NUMBER_ARRAY is not native, searching on custom types.
-[2025-11-24 20:01:08] ORACLE_HOME = /usr/local/oracle/10g
-[2025-11-24 20:01:08] NLS_LANG = AMERICAN_AMERICA.AL32UTF8
-[2025-11-24 20:01:08] NLS_NCHAR = AL32UTF8
-[2025-11-24 20:01:08] Trying to connect to database: dbi:Oracle:host=localhost;service_name=XEPDB1;port=1521
-[2025-11-24 20:01:08] Isolation level: SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
-[2025-11-24 20:01:08] 	Found Type: NUMBER_ARRAY
-[2025-11-24 20:01:08] 	Looking inside custom type NUMBER_ARRAY to extract values...
-[2025-11-24 20:01:08] 	found type description: NUMBER_ARRAY(numeric)
-[2025-11-24 20:01:08] Fetching all data from TEST_VARRAY_FULL tuples...
-[2025-11-24 20:01:08] DEBUG: Formatting bulk of 10000 data (real: 4 rows) for PostgreSQL.
-[2025-11-24 20:01:08] DEBUG: Creating output for 10000 tuples
-[2025-11-24 20:01:08] Dumping data from TEST_VARRAY_FULL to file: test_output.sql
-[2025-11-24 20:01:08] Extracted records from table TEST_VARRAY_FULL: total_records = 4 (avg: 4 recs/sec)
-[2025-11-24 20:01:08] Restarting sequences
-[2025-11-24 20:01:08] Total time to export data from 3 tables (0 partitions, 0 sub-partitions) and 13 total rows:  0 wallclock secs ( 0.06 usr +  0.01 sys =  0.07 CPU)
-[2025-11-24 20:01:08] Saving complex type checksums to complex_checksums.json...
-[2025-11-24 20:01:08] Saved checksums for 3 tables and 13 rows
+[2026-01-30 22:33:27] Collecting 12 columns in ALL_INDEXES took:  0 wallclock secs ( 0.00 usr +  0.00 sys =  0.00 CPU)
+[2026-01-30 22:33:27] Retrieving foreign keys information...
+[2026-01-30 22:33:27] Retrieving unique keys information...
+[2026-01-30 22:33:27] Retrieving check constraints information...
+[2026-01-30 22:33:27] [1] Scanning table TEST_NESTED_FULL (4 rows)...
+[2026-01-30 22:33:27] [2] Scanning table TEST_OBJECT_FULL (5 rows)...
+[2026-01-30 22:33:27] [3] Scanning table TEST_VARRAY_FULL (4 rows)...
+[2026-01-30 22:33:27] ORACLE_HOME = /usr/local/oracle/10g
+[2026-01-30 22:33:27] NLS_LANG = AMERICAN_AMERICA.AL32UTF8
+[2026-01-30 22:33:27] NLS_NCHAR = AL32UTF8
+[2026-01-30 22:33:27] Trying to connect to database: dbi:Oracle:host=localhost;service_name=XEPDB1;port=1521
+[2026-01-30 22:33:27] Isolation level: SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
+[2026-01-30 22:33:27] Automatic storing of current SCN for table export: 12442297
+[2026-01-30 22:33:27] Retrieving partitions information...
+[2026-01-30 22:33:27] Collecting 4 indexes in ALL_INDEXES took:  0 wallclock secs ( 0.00 usr +  0.00 sys =  0.00 CPU)
+[2026-01-30 22:33:27] (pid: 9163) Exporting data from table TEST_NESTED_FULL...
+[2026-01-30 22:33:27] Looking how to retrieve data from TEST_NESTED_FULL...
+[2026-01-30 22:33:27] [WARNING] [COMPLEX_TYPE] Table: TEST_NESTED_FULL, Column: TAGS, Type: STRING_LIST - Manual review required
+[2026-01-30 22:33:27] DEGUG: Query sent to Oracle: SELECT a."ID",a."POST_TITLE",a."TAGS",a."CREATED_DATE" FROM "LOLU"."TEST_NESTED_FULL" AS OF SCN 12442297 a
+[2026-01-30 22:33:27] Data type STRING_LIST is not native, searching on custom types.
+[2026-01-30 22:33:27] ORACLE_HOME = /usr/local/oracle/10g
+[2026-01-30 22:33:27] NLS_LANG = AMERICAN_AMERICA.AL32UTF8
+[2026-01-30 22:33:27] NLS_NCHAR = AL32UTF8
+[2026-01-30 22:33:27] Trying to connect to database: dbi:Oracle:host=localhost;service_name=XEPDB1;port=1521
+[2026-01-30 22:33:27] Isolation level: SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
+[2026-01-30 22:33:27] 	Found Type: STRING_LIST
+[2026-01-30 22:33:27] 	Looking inside custom type STRING_LIST to extract values...
+[2026-01-30 22:33:27] 	found type description: STRING_LIST(varchar)
+[2026-01-30 22:33:27] Fetching all data from TEST_NESTED_FULL tuples...
+[2026-01-30 22:33:27] DEBUG set_custom_type_value: data_type=STRING_LIST, dest_type=varchar(500)[]
+[2026-01-30 22:33:27] DEBUG set_custom_type_value: data_type=STRING_LIST, dest_type=varchar(500)[]
+[2026-01-30 22:33:27] DEBUG set_custom_type_value: data_type=STRING_LIST, dest_type=varchar(500)[]
+[2026-01-30 22:33:27] DEBUG set_custom_type_value: data_type=STRING_LIST, dest_type=varchar(500)[]
+[2026-01-30 22:33:27] DEBUG: Formatting bulk of 10000 data (real: 4 rows) for PostgreSQL.
+[2026-01-30 22:33:27] DEBUG: Creating output for 10000 tuples
+[2026-01-30 22:33:27] Dumping data from TEST_NESTED_FULL to file: test_output.sql
+[2026-01-30 22:33:27] Extracted records from table TEST_NESTED_FULL: total_records = 4 (avg: 4 recs/sec)
+[2026-01-30 22:33:27] (pid: 9163) Exporting data from table TEST_OBJECT_FULL...
+[2026-01-30 22:33:27] Looking how to retrieve data from TEST_OBJECT_FULL...
+[2026-01-30 22:33:27] [WARNING] [COMPLEX_TYPE] Table: TEST_OBJECT_FULL, Column: ADDRESS, Type: ADDRESS_TYPE - Manual review required
+[2026-01-30 22:33:27] DEGUG: Query sent to Oracle: SELECT a."ID",a."CUSTOMER_NAME",a."ADDRESS",a."CREATED_DATE" FROM "LOLU"."TEST_OBJECT_FULL" AS OF SCN 12442297 a
+[2026-01-30 22:33:27] Data type ADDRESS_TYPE is not native, searching on custom types.
+[2026-01-30 22:33:27] ORACLE_HOME = /usr/local/oracle/10g
+[2026-01-30 22:33:27] NLS_LANG = AMERICAN_AMERICA.AL32UTF8
+[2026-01-30 22:33:27] NLS_NCHAR = AL32UTF8
+[2026-01-30 22:33:27] Trying to connect to database: dbi:Oracle:host=localhost;service_name=XEPDB1;port=1521
+[2026-01-30 22:33:27] Isolation level: SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
+[2026-01-30 22:33:27] 	Found Type: ADDRESS_TYPE
+[2026-01-30 22:33:27] 	Looking inside custom type ADDRESS_TYPE to extract values...
+[2026-01-30 22:33:27] 	found type description: ADDRESS_TYPE(varchar,varchar,numeric,varchar)
+[2026-01-30 22:33:27] Fetching all data from TEST_OBJECT_FULL tuples...
+[2026-01-30 22:33:27] DEBUG set_custom_type_value: data_type=ADDRESS_TYPE, dest_type=jsonb
+[2026-01-30 22:33:27] DEBUG set_custom_type_value: data_type=ADDRESS_TYPE, dest_type=jsonb
+[2026-01-30 22:33:27] DEBUG set_custom_type_value: data_type=ADDRESS_TYPE, dest_type=jsonb
+[2026-01-30 22:33:27] DEBUG set_custom_type_value: data_type=ADDRESS_TYPE, dest_type=jsonb
+[2026-01-30 22:33:27] DEBUG set_custom_type_value: data_type=ADDRESS_TYPE, dest_type=jsonb
+[2026-01-30 22:33:27] DEBUG: Formatting bulk of 10000 data (real: 5 rows) for PostgreSQL.
+[2026-01-30 22:33:27] DEBUG: Creating output for 10000 tuples
+[2026-01-30 22:33:27] Dumping data from TEST_OBJECT_FULL to file: test_output.sql
+[2026-01-30 22:33:27] Extracted records from table TEST_OBJECT_FULL: total_records = 5 (avg: 5 recs/sec)
+[2026-01-30 22:33:27] (pid: 9163) Exporting data from table TEST_VARRAY_FULL...
+[2026-01-30 22:33:27] Looking how to retrieve data from TEST_VARRAY_FULL...
+[2026-01-30 22:33:27] [WARNING] [COMPLEX_TYPE] Table: TEST_VARRAY_FULL, Column: NUMBERS, Type: NUMBER_ARRAY - Manual review required
+[2026-01-30 22:33:27] DEGUG: Query sent to Oracle: SELECT a."ID",a."NAME",a."NUMBERS",a."CREATED_DATE" FROM "LOLU"."TEST_VARRAY_FULL" AS OF SCN 12442297 a
+[2026-01-30 22:33:27] Data type NUMBER_ARRAY is not native, searching on custom types.
+[2026-01-30 22:33:27] ORACLE_HOME = /usr/local/oracle/10g
+[2026-01-30 22:33:27] NLS_LANG = AMERICAN_AMERICA.AL32UTF8
+[2026-01-30 22:33:27] NLS_NCHAR = AL32UTF8
+[2026-01-30 22:33:27] Trying to connect to database: dbi:Oracle:host=localhost;service_name=XEPDB1;port=1521
+[2026-01-30 22:33:27] Isolation level: SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
+[2026-01-30 22:33:27] 	Found Type: NUMBER_ARRAY
+[2026-01-30 22:33:27] 	Looking inside custom type NUMBER_ARRAY to extract values...
+[2026-01-30 22:33:27] 	found type description: NUMBER_ARRAY(numeric)
+[2026-01-30 22:33:27] Fetching all data from TEST_VARRAY_FULL tuples...
+[2026-01-30 22:33:27] DEBUG set_custom_type_value: data_type=NUMBER_ARRAY, dest_type=decimal(10,2)[]
+[2026-01-30 22:33:27] DEBUG set_custom_type_value: data_type=NUMBER_ARRAY, dest_type=decimal(10,2)[]
+[2026-01-30 22:33:27] DEBUG set_custom_type_value: data_type=NUMBER_ARRAY, dest_type=decimal(10,2)[]
+[2026-01-30 22:33:27] DEBUG set_custom_type_value: data_type=NUMBER_ARRAY, dest_type=decimal(10,2)[]
+[2026-01-30 22:33:27] DEBUG: Formatting bulk of 10000 data (real: 4 rows) for PostgreSQL.
+[2026-01-30 22:33:27] DEBUG: Creating output for 10000 tuples
+[2026-01-30 22:33:27] Dumping data from TEST_VARRAY_FULL to file: test_output.sql
+[2026-01-30 22:33:27] Extracted records from table TEST_VARRAY_FULL: total_records = 4 (avg: 4 recs/sec)
+[2026-01-30 22:33:27] Restarting sequences
+[2026-01-30 22:33:27] Total time to export data from 3 tables (0 partitions, 0 sub-partitions) and 13 total rows:  0 wallclock secs ( 0.06 usr +  0.02 sys =  0.08 CPU)
+[2026-01-30 22:33:27] 
+================================================================================
+[2026-01-30 22:33:27] COMPLEX TYPE SUPPORT ANALYSIS
+[2026-01-30 22:33:27] ================================================================================
+
+[2026-01-30 22:33:27] [WARNING] PARTIALLY SUPPORTED custom type: 'DOCUMENT_TYPE'
+[2026-01-30 22:33:27]           Confidence: 40% | Oracle Type: OBJECT | PostgreSQL: document_type
+[2026-01-30 22:33:27]           Issue: OBJECT type 'DOCUMENT_TYPE' contains LOB attributes (CLOB/BLOB). Large object handling in composite types may have issues with data export.
+[2026-01-30 22:33:27]           Recommendation: Test data export thoroughly. Consider extracting LOB columns separately or using PostgreSQL TEXT/BYTEA types directly instead of composite.
+[2026-01-30 22:33:27] 
+[2026-01-30 22:33:27] [WARNING] PARTIALLY SUPPORTED custom type: 'EMPLOYEE_LIST'
+[2026-01-30 22:33:27]           Confidence: 65% | Oracle Type: COLLECTION | PostgreSQL: employee_type[]
+[2026-01-30 22:33:27]           Issue: COLLECTION 'EMPLOYEE_LIST' is an array of OBJECT type 'EMPLOYEE_TYPE'. Schema mapping works, but data export format is complex.
+[2026-01-30 22:33:27]           Recommendation: Verify data format: {(val1,val2),(val3,val4)}. May need manual formatting adjustment for PostgreSQL import.
+[2026-01-30 22:33:27] 
+[2026-01-30 22:33:27] [WARNING] PARTIALLY SUPPORTED custom type: 'PERSON_NESTED'
+[2026-01-30 22:33:27]           Confidence: 70% | Oracle Type: OBJECT | PostgreSQL: person_nested
+[2026-01-30 22:33:27]           Issue: OBJECT 'PERSON_NESTED' is a complex nested type. Automatic mapping applied but may need manual verification.
+[2026-01-30 22:33:27]           Recommendation: Test data export and PostgreSQL import thoroughly.
+[2026-01-30 22:33:27] 
+[2026-01-30 22:33:27] [WARNING] PARTIALLY SUPPORTED custom type: 'PHONE_TYPE'
+[2026-01-30 22:33:27]           Confidence: 70% | Oracle Type: OBJECT | PostgreSQL: phone_type
+[2026-01-30 22:33:27]           Issue: OBJECT 'PHONE_TYPE' is a complex nested type. Automatic mapping applied but may need manual verification.
+[2026-01-30 22:33:27]           Recommendation: Test data export and PostgreSQL import thoroughly.
+[2026-01-30 22:33:27] 
+[2026-01-30 22:33:27] ================================================================================
+[2026-01-30 22:33:27] SUMMARY: Complex Type Support Analysis
+[2026-01-30 22:33:27]   Fully Supported Types: 10
+[2026-01-30 22:33:27]   Partially Supported Types: 4[2026-01-30 22:33:27]  (review recommended)
+[2026-01-30 22:33:27] ================================================================================
+
+[2026-01-30 22:33:27] Saving complex type checksums to complex_checksums.json...
+[2026-01-30 22:33:27] Saved checksums for 3 tables and 13 rows

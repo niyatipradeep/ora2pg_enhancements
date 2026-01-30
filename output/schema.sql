@@ -12,29 +12,29 @@ ALTER SCHEMA lolu OWNER TO lolu;
 SET search_path = lolu,public;
 
 
-CREATE TABLE test_varray (
+CREATE TABLE test_varray_full (
 	id bigint NOT NULL,
-	name varchar(50),
-	numbers NUMBER_ARRAY,
-	created_date timestamp(0)
+	name varchar(100),
+	numbers decimal(10,2)[],
+	created_date TIMESTAMP(6)
 ) ;
-ALTER TABLE test_varray ADD PRIMARY KEY (id);
+ALTER TABLE test_varray_full ADD PRIMARY KEY (id);
 
 
-CREATE TABLE test_object (
+CREATE TABLE test_object_full (
 	id bigint NOT NULL,
 	customer_name varchar(100),
-	address ADDRESS_TYPE,
-	created_date timestamp(0)
+	address jsonb,
+	created_date TIMESTAMP(6)
 ) ;
-ALTER TABLE test_object ADD PRIMARY KEY (id);
+ALTER TABLE test_object_full ADD PRIMARY KEY (id);
 
 
-CREATE TABLE test_nested (
+CREATE TABLE test_nested_full (
 	id bigint NOT NULL,
-	title varchar(100),
-	tags STRING_LIST,
-	created_date timestamp(0)
+	post_title varchar(100),
+	tags varchar(500)[],
+	created_date TIMESTAMP(6)
 ) ;
-CREATE UNIQUE INDEX sys_c008226 ON test_nested (tags);
-ALTER TABLE test_nested ADD PRIMARY KEY (id);
+CREATE UNIQUE INDEX sys_c008234 ON test_nested_full (tags);
+ALTER TABLE test_nested_full ADD PRIMARY KEY (id);

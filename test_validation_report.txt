@@ -1,7 +1,7 @@
 Ora2Pg Complex Type Data Integrity Validation Report
 ============================================================
 
-Generated: Mon Nov 24 18:39:49 2025
+Generated: Fri Jan 30 18:42:05 2026
 
 COMPLEX TYPES FOUND
 ------------------------------

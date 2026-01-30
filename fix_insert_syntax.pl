@@ -20,12 +20,13 @@ my @lines = <$fh>;
 close $fh;
 
 # Transform a single "complex" field string like:
-#   ({"(a,b,c)"})
-#   ("{1,2,3}")
-#   ("{10,20,30,40,50}")
+#   '{AI}'
+#   '{Tech,Database,Cloud}'
+#   '("{456 Oak Ave,Los Angeles,90210,USA}")'
 # into:
-#   {a,b,c}                     (array)
-#   ("street","city",123,"ctry") (composite)
+#   {AI}                        (array)
+#   {Tech,Database,Cloud}       (array)
+#   ("456 Oak Ave","Los Angeles",90210,"USA") (composite)
 #
 # Returns undef if it doesn't recognize the pattern.
 sub transform_complex_field {
@@ -39,29 +40,39 @@ sub transform_complex_field {
     my $inner;
     my $kind = ''; # 'object' or 'array' or ''
 
-    if ($col =~ /^\(\{\"?\((.*)\)\"?\}\)$/s) {
+    # Pattern 1: '("{...}")' - composite type with curly braces wrapper
+    if ($col =~ /^\(\"\{(.*)\}\"\)$/s) {
+        # ("{456 Oak Ave,Los Angeles,90210,USA}")
+        $inner = $1;
+        $kind  = 'object';
+    }
+    # Pattern 2: '{...}' - simple array
+    elsif ($col =~ /^\{(.*)\}$/s) {
+        # {AI} or {Tech,Database,Cloud}
+        $inner = $1;
+        $kind  = 'array';
+    }
+    # Pattern 3: ({"(a,b,c)"}) - composite with parens and quotes
+    elsif ($col =~ /^\(\{\"?\((.*)\)\"?\}\)$/s) {
         # ({"(a,b,c)"})
         $inner = $1;
-        # kind decided later
+        $kind  = 'object';
     }
+    # Pattern 4: ("{1,2,3}") or ("{a,b,c}") - quoted array
     elsif ($col =~ /^\(\"?\{(.*)\}\"?\)$/s) {
         # ("{1,2,3}") or ("{a,b,c}")
         $inner = $1;
         $kind  = 'array';
     }
+    # Pattern 5: Plain parentheses (a,b,c)
     elsif ($col =~ /^\((.*)\)$/s) {
-        # Plain parentheses (a,b,c)
         $inner = $1;
-        # kind decided later
+        $kind  = 'object';
     }
-    elsif ($col =~ /^\{(.*)\}$/s) {
-        # Already an array literal {a,b}
-        $inner = $1;
-        $kind  = 'array';
-    }
+    # Pattern 6: "a,b,c" – treat as CSV inside a single string
     elsif ($col =~ /^\"(.*)\"$/s && $col =~ /,/) {
-        # "a,b,c" – treat as CSV inside a single string
         $inner = $1;
+        # Decide based on content
     } else {
         # Not a complex-looking field; leave unchanged
         return undef;
@@ -69,12 +80,29 @@ sub transform_complex_field {
 
     return undef unless defined $inner;
 
-    # Split into CSV parts (ora2pg does not put commas inside values here)
-    my @parts = split(/,/, $inner, -1);
+    # Smart CSV parsing that handles quoted values
+    my @parts;
+    my $current = '';
+    my $in_quotes = 0;
+    
+    for my $char (split //, $inner) {
+        if ($char eq '"' && ($current eq '' || substr($current, -1) ne '\\')) {
+            $in_quotes = !$in_quotes;
+            $current .= $char;
+        } elsif ($char eq ',' && !$in_quotes) {
+            push @parts, $current;
+            $current = '';
+        } else {
+            $current .= $char;
+        }
+    }
+    push @parts, $current if defined $current;
 
-    # Trim whitespace for each part
+    # Trim whitespace for each part and remove quotes if present
     for (@parts) {
         s/^\s+|\s+$//g;
+        # Remove outer quotes if they exist
+        s/^"(.*)"$/$1/;
     }
 
     # Decide type if still unknown
@@ -91,12 +119,7 @@ sub transform_complex_field {
 
     if ($kind eq 'array') {
         # Build array literal {a,b,c}
-        # Per your COPY script, array elements are not additionally
-        # double-quoted, even for strings.
-        for my $p (@parts) {
-            $p =~ s/\\/\\\\/g;  # escape backslash
-            $p =~ s/\}/\\\}/g;  # escape closing brace
-        }
+        # Array elements are not double-quoted in PostgreSQL array syntax
         my $new = '{' . join(',', @parts) . '}';
         return $new;
     }
@@ -113,8 +136,9 @@ sub transform_complex_field {
                 $p = $p;
             }
             else {
-                # string: wrap in double quotes, escape inner double quotes
-                $p =~ s/"/\\"/g;
+                # string: wrap in double quotes, escape inner quotes and backslashes
+                $p =~ s/\\/\\\\/g;  # escape backslash first
+                $p =~ s/"/\\"/g;    # then escape quotes
                 $p = qq{"$p"};
             }
         }
